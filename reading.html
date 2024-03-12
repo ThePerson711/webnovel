@@ -91,7 +91,7 @@
       overflow-y: auto;
     }
     ::-webkit-scrollbar {
-      width: 12px;
+      width: 8px;
     }
     /* Track */
     ::-webkit-scrollbar-track {
@@ -156,12 +156,13 @@
     }
 
     .read_list {
+      display: flex;
+      justify-content: center;
       width: 100%;
-      
     }
     .text_ {
       font-size: var(--text-size);
-      width: 100%;
+      width: 94%;
       height: 100%;
     }
 
@@ -187,20 +188,26 @@
       cursor: pointer;
     }
     .translte_panel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      color: white;
+      font-weight: bold;
       position: fixed;
       z-index: 10;
-      width: calc(1vw*50);
-      height: 50px;
+      width: calc(1vw*48);
+      height: 70px;
+      border-radius: 8px;
+      border: solid 4px transparent;
       left: 50%;
-      background-color: aqua;
-      opacity: 0.5;
+      background-color: rgb(109, 110, 110);
       transform: translate(-50%, 10px);
     }
   </style>
 </head>
 <body>
   <div class="translte_panel" id="translate_panel">
-    ?
   </div>
   <div class="display" id="display">
     <div class="header" id="header">
@@ -227,27 +234,38 @@
         <p class="text_" id="text_p"></p>
       </div>
       <div class="end_panel" id="end_panel">
-        <div class="previous_div" id="previous_div">
+        <div class="previous_div" id="previous_div"
+          onclick="ChangeChapter(`previous`)">
           Previous
         </div>
         <div class="index_div" id="index_div">
           Index
         </div>
-        <div class="next_div" id="next_div">
+        <div class="next_div" id="next_div"
+          onclick="ChangeChapter(`next`)">
           Next
         </div>
       </div>
     </div>
   </div>
+  <script src="files/theauthorspov/the_a_p.js"></script>
+  <script src="translate.js"></script>
+  <script src="files/novels.js"></script>
   <script src="data.js"></script>
   <script>
+    let data_import = novels[0];
+    let Curent_chapter = 1;
     let data_for = {
-      title: "The Author's POV",
+      title: data_import.title,
       path: "",
-      chapter: 25,
-      chapter_name: "Dungen[1]",
-      text: chap_1,
+      chapter: Curent_chapter,
+      chapter_name: Chapters[Curent_chapter].chapter_name,
+      text: Chapters[Curent_chapter].data_text,
     };
+    let changed = true;
+    let selected_text = "";
+    let id = [null];
+    let ind_ = 0;
 
     document.documentElement.setAttribute('page-theme',"dark");
     document.documentElement.setAttribute('text-size',"22");
@@ -256,6 +274,56 @@
     document.getElementById("chapter_div").innerHTML = 
       `Chapter ${data_for.chapter}: ${data_for.chapter_name}`;
     document.getElementById("text_p").innerHTML = data_for.text
+ 
+    document.addEventListener('selectionchange', ()=>{
+      changed = false;
+      setTimeout(() => {
+        changed = true;
+      }, 500);
+    });
+    setInterval(() => {
+      if (changed) {
+        if (selected_text !== window.getSelection().toString()) {
+          selected_text = window.getSelection().toString();
+          ind_++;
+          console.log(ind_)
+          localStorage.setItem(`answer_fi_${ind_}`, "false");
+          TranslateText(ind_, "en", "uz", selected_text);
+          f1(ind_);
+        }
+      }
+    }, 100);
+    
+    function f1(num_) {
+      id.push();
+      id[num_] = setInterval(() => {
+        if ( localStorage.getItem(`answer_fi_${num_}`) === "true" ) {
+          if (localStorage.getItem(`answer_tr_${num_}`).length > 20) {
+            alert(localStorage.getItem(`answer_tr_${num_}`));
+          } else {
+            document.getElementById("translate_panel").innerHTML = 
+              localStorage.getItem(`answer_tr_${num_}`);
+          }
+          localStorage.removeItem(`answer_tr_${num_}`);
+          localStorage.removeItem(`answer_fi_${num_}`);
+          clearInterval(id[num_]);
+        }
+      }, 100);
+    }
+   
+    function ChangeChapter(_command_) {
+      if (_command_ === "next") {
+        if (Curent_chapter < Chapters.length-1) {
+          console.log("s")
+        }
+      } else if (_command_ === "previous") {
+        if (Curent_chapter > 1) {
+          console.log("s")
+
+        }
+      }
+    }
+
   </script>
 </body>
 </html>
