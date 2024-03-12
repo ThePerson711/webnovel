@@ -5,10 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Name</title>
   <style>
+    :root {
+      --title-size: 30px;
+    }
 
     [page-theme="light"] {
-      --body-bg-color: rgba(220, 220, 220, 0.75);
+      --body-bg-color: rgba(24, 23, 23, 0.75);
       --body-element-color: rgb(173, 173, 173);
+      --text-color: rgb(219, 219, 219);
+      --title-color: rgb(108, 73, 182);
+      --button-bg-color: rgb(108, 73, 182);
     }
     [page-theme="dark"] {
       --body-bg-color: rgba(24, 23, 23, 0.75);
@@ -16,6 +22,31 @@
       --text-color: rgb(219, 219, 219);
       --title-color: rgb(108, 73, 182);
       --button-bg-color: rgb(108, 73, 182);
+    }
+
+    [text-size="14"] {
+      --text-size: 14px;
+    }
+    [text-size="16"] {
+      --text-size: 16px;
+    }
+    [text-size="18"] {
+      --text-size: 18px;
+    }
+    [text-size="20"] {
+      --text-size: 20px;
+    }
+    [text-size="22"] {
+      --text-size: 22px;
+    }
+    [text-size="24"] {
+      --text-size: 24px;
+    }
+    [text-size="26"] {
+      --text-size: 26px;
+    }
+    [text-size="28"] {
+      --text-size: 28px;
     }
 
     *{
@@ -48,7 +79,7 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      height: 70px;
+      height: 95px;
       margin: 2px 0;
       background-color: var(--body-bg-color);
     }
@@ -83,8 +114,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       margin: 0 20px;
       background-color: red;
       cursor: pointer;
@@ -93,8 +124,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 95px;
-      height: 60px;
+      width: 135px;
+      height: 90px;
       margin: 0 20px;
       background-color: red;
       cursor: pointer;
@@ -107,8 +138,8 @@
       align-items: start;
       width: 100%;
       min-height: 90px;
-      height: 90px;
-      font-size: 20px;
+      height: 100px;
+      font-size: var(--title-size);
       font-weight: bold;
       border-bottom: solid 2px var(--body-element-color);
       border-top: solid 2px var(--body-element-color);
@@ -129,6 +160,7 @@
       
     }
     .text_ {
+      font-size: var(--text-size);
       width: 100%;
       height: 100%;
     }
@@ -154,9 +186,22 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .translte_panel {
+      position: fixed;
+      z-index: 10;
+      width: calc(1vw*50);
+      height: 50px;
+      left: 50%;
+      background-color: aqua;
+      opacity: 0.5;
+      transform: translate(-50%, 10px);
+    }
   </style>
 </head>
 <body>
+  <div class="translte_panel" id="translate_panel">
+    ?
+  </div>
   <div class="display" id="display">
     <div class="header" id="header">
       <div class="back_div" id="back_div">
@@ -205,6 +250,7 @@
     };
 
     document.documentElement.setAttribute('page-theme',"dark");
+    document.documentElement.setAttribute('text-size',"22");
 
     document.getElementById("title_div").innerHTML = data_for.title;
     document.getElementById("chapter_div").innerHTML = 
