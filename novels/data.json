@@ -1,0 +1,20 @@
+{
+    "novels": [
+        {
+            "path": "novels/TheAuthorsPOV/",
+            "id": "fd_0001",
+            "name": "The Authors POV",
+            "chapters": 2,
+            "description": "???",
+            "img_path": "./"
+        },
+        {
+            "path": "./",
+            "id": "fd_0002",
+            "name": "TBATE",
+            "chapters": 150,
+            "description": "???",
+            "img_path": "./"
+        }
+    ]
+}

@@ -81,6 +81,7 @@
       width: 100%;
       height: 95px;
       margin: 2px 0;
+      padding: 10px 0;
       background-color: var(--body-bg-color);
     }
     .scroll_list {
@@ -124,11 +125,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 135px;
-      height: 90px;
-      margin: 0 20px;
+      width: calc(1vw*48);
+      border: solid 4px rgb(56, 56, 56);
+      border-radius: 8px;
+      height: 70px;
+      margin: 0 -20px;
       background-color: red;
       cursor: pointer;
+      z-index: 14;
     }
 
     .title_info {
@@ -139,7 +143,7 @@
       width: 100%;
       min-height: 90px;
       height: 100px;
-      font-size: var(--title-size);
+      font-size: var(--text-size);
       font-weight: bold;
       border-bottom: solid 2px var(--body-element-color);
       border-top: solid 2px var(--body-element-color);
@@ -174,6 +178,8 @@
       width: 100%;
       height: 55px;
       margin-top: 20px;
+      padding: 32px 0;
+      border-top: solid 2px var(--body-element-color);
     }
     .end_panel div {
       display: flex;
@@ -202,7 +208,7 @@
       border: solid 4px transparent;
       left: 50%;
       background-color: rgb(109, 110, 110);
-      transform: translate(-50%, 10px);
+      transform: translate(-50%, 12px);
     }
   </style>
 </head>
@@ -235,45 +241,87 @@
       </div>
       <div class="end_panel" id="end_panel">
         <div class="previous_div" id="previous_div"
-          onclick="ChangeChapter(`previous`)">
+          onclick="ChangeChapCom(`previous`)">
           Previous
         </div>
         <div class="index_div" id="index_div">
           Index
         </div>
         <div class="next_div" id="next_div"
-          onclick="ChangeChapter(`next`)">
+          onclick="ChangeChapCom(`next`)">
           Next
         </div>
       </div>
     </div>
   </div>
-  <script src="files/theauthorspov/the_a_p.js"></script>
   <script src="translate.js"></script>
-  <script src="files/novels.js"></script>
   <script src="data.js"></script>
   <script>
-    let data_import = novels[0];
-    let Curent_chapter = 1;
-    let data_for = {
-      title: data_import.title,
-      path: "",
-      chapter: Curent_chapter,
-      chapter_name: Chapters[Curent_chapter].chapter_name,
-      text: Chapters[Curent_chapter].data_text,
-    };
+    let CurChap_ = 1;
+    let Chap_ID = "fd_0001";
+
     let changed = true;
     let selected_text = "";
     let id = [null];
     let ind_ = 0;
+    let ReadNovel = {
+      name: "",
+      id: "",
+      path: "",
+      chapters: 0,
+      curent_chapter: CurChap_,
+      curent_chapter_name: "",
+      text: "??"
+    };
 
     document.documentElement.setAttribute('page-theme',"dark");
     document.documentElement.setAttribute('text-size',"22");
 
-    document.getElementById("title_div").innerHTML = data_for.title;
-    document.getElementById("chapter_div").innerHTML = 
-      `Chapter ${data_for.chapter}: ${data_for.chapter_name}`;
-    document.getElementById("text_p").innerHTML = data_for.text
+    ReadSupData(Chap_ID, ReadNovel.curent_chapter);
+
+
+    function ReadSupData(chap_id_, chap_cur_num_) {
+      localStorage.setItem("Download_text_data_", "true");
+      fetchJSONData("fd_0001");
+      id_download_text = setInterval(() => {
+        if (localStorage.getItem("Download_text_data_") === "false") {
+          ReadTxtData();
+          clearInterval(id_download_text);
+        }
+      }, 100);
+    }
+
+
+    function ReadTxtData() {
+      fetchTextData(ReadNovel.path, ReadNovel.curent_chapter);      
+      id_download_read_text = setInterval(() => {
+        if (localStorage.getItem("Download_read_text_data_") === "false") {
+          //      localStorage.removeItem("Download_read_text_data_");
+          TextAllPage();
+          clearInterval(id_download_read_text);
+        }
+      }, 100);
+    } 
+
+    function TextAllPage() {
+      document.getElementById("title_div").innerHTML = ReadNovel.name;
+      document.getElementById("chapter_div").innerHTML = 
+        `Chapter ${ReadNovel.curent_chapter}: ${ReadNovel.curent_chapter_name}`;
+      document.getElementById("text_p").innerHTML = ReadNovel.text;
+      document.getElementById("scroll_list").scrollTop = 0;
+      if (ReadNovel.curent_chapter === 1) {
+        document.getElementById("previous_div").style = "opacity: 0.25";
+      } else {
+        document.getElementById("previous_div").style = "opacity: 1";        
+      } 
+      if (ReadNovel.curent_chapter === ReadNovel.chapters) {
+        document.getElementById("next_div").style = "opacity: 0.25";
+      } else {
+        document.getElementById("next_div").style = "opacity: 1";        
+      } 
+    }
+
+
  
     document.addEventListener('selectionchange', ()=>{
       changed = false;
@@ -283,7 +331,10 @@
     });
     setInterval(() => {
       if (changed) {
-        if (selected_text !== window.getSelection().toString()) {
+        if (selected_text !== window.getSelection().toString() && 
+            window.getSelection().toString() !== " " &&
+            window.getSelection().toString() !== "" &&
+            window.getSelection().toString().length < 500)  {
           selected_text = window.getSelection().toString();
           ind_++;
           console.log(ind_)
@@ -298,11 +349,12 @@
       id.push();
       id[num_] = setInterval(() => {
         if ( localStorage.getItem(`answer_fi_${num_}`) === "true" ) {
-          if (localStorage.getItem(`answer_tr_${num_}`).length > 20) {
-            alert(localStorage.getItem(`answer_tr_${num_}`));
+          data_text_ = localStorage.getItem(`answer_tr_${num_}`);
+          if (data_text_.length < 25) {
+            document.getElementById("translate_panel").innerHTML = data_text_;
           } else {
-            document.getElementById("translate_panel").innerHTML = 
-              localStorage.getItem(`answer_tr_${num_}`);
+            // pop up list ??? !!!
+            alert(data_text_);
           }
           localStorage.removeItem(`answer_tr_${num_}`);
           localStorage.removeItem(`answer_fi_${num_}`);
@@ -311,19 +363,57 @@
       }, 100);
     }
    
-    function ChangeChapter(_command_) {
-      if (_command_ === "next") {
-        if (Curent_chapter < Chapters.length-1) {
-          console.log("s")
-        }
-      } else if (_command_ === "previous") {
-        if (Curent_chapter > 1) {
-          console.log("s")
 
-        }
+    async function fetchJSONData(id_) {
+      await fetch("./novels/data.json")
+          .then((res) => {
+              if (!res.ok) {
+                  throw new Error
+                      (`HTTP error! Status: ${res.status}`);
+              }
+              return res.json();
+          })
+          .then((data) => {
+                  data.novels.forEach(element => {
+                    if (element.id === id_) {
+                      ReadNovel.name = element.name;
+                      ReadNovel.id = element.id;
+                      ReadNovel.path = element.path;
+                      ReadNovel.chapters = element.chapters;
+                    }      
+                    localStorage.setItem("Download_text_data_", "false");   
+                  });
+                })
+          .catch((error) => 
+                console.error("Unable to fetch data:", error));
+  }
+
+
+  function fetchTextData(path_, chap_num_) {
+    Promise.all([
+    fetch(`${path_}chap_${chap_num_}.txt`).then(x => x.text()),
+    fetch(`${path_}chap_name_${chap_num_}.txt`).then(x => x.text())
+    ]).then(([sampleResp, sample2Resp]) => {
+      ReadNovel.text = sampleResp;
+      ReadNovel.curent_chapter_name = sample2Resp;
+      localStorage.setItem("Download_read_text_data_", "false");  
+    });
+  }
+
+
+  function ChangeChapCom(command_) {
+    if (command_ === "next") {
+      if (ReadNovel.curent_chapter < ReadNovel.chapters) {
+        ReadNovel.curent_chapter++;
+        ReadSupData(Chap_ID, ReadNovel.curent_chapter);
+      }
+    } else if (command_ === "previous") {
+      if (ReadNovel.curent_chapter > 1) {
+        ReadNovel.curent_chapter--;
+        ReadSupData(Chap_ID, ReadNovel.curent_chapter);
       }
     }
-
+  }
   </script>
 </body>
 </html>
